@@ -25,7 +25,7 @@ export default async function handler(req, res) {
                             id: user.id,
                             role: user.role
                         }, 'vuteqcorp',{ expiresIn: '1y' });
-                        setCookie('@vuteq-token', token,{req, res, httpOnly: true, maxAge: 60 * 60 * 24 * 90});
+                        setCookie('@vuteq-token-exedy', token,{req, res, httpOnly: true, maxAge: 60 * 60 * 24 * 90});
                         res.status(200).json({
                             ok: true,
                             data: "Login Successfully",

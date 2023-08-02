@@ -1,6 +1,5 @@
 import Customer from "@/models/Customer";
 import checkCookieMiddleware from "@/pages/api/middleware";
-import {where} from "sequelize";
 
 async function handler(req, res) {
     switch (req.method) {
@@ -27,6 +26,7 @@ async function handler(req, res) {
                     data: customer
                 });
             } catch (e) {
+                console.log(e.message);
                 res.status(500).json({
                     ok: false,
                     data: "Internal Server Error"

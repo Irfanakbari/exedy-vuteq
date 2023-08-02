@@ -4,53 +4,55 @@ import { BsFillTrashFill } from "react-icons/bs";
 import { AiFillFileExcel } from "react-icons/ai";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form"
 import DeleteModal from "@/components/Modal/DeleteModal";
 import { FaRegWindowMaximize } from "react-icons/fa";
 import {showErrorToast, showSuccessToast} from "@/utils/toast";
+import {customerState} from "@/utils/states";
 
 export default function Customer() {
-    const [dataCustomers, setDataCustomers] = useState([]);
+    const {setCustomer, listCustomer} = customerState()
     const [selectedCell, setSelectedCell] = useState({});
+
+    const {
+        register,
+        handleSubmit,
+        reset
+    } = useForm()
 
     const [closeModal, setCloseModal] = useState(false);
     const [closeAddModal, setCloseAddModal] = useState(false);
     const [closeEditModal, setCloseEditModal] = useState(false);
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [filters, setFilters] = useState([]);
+    const [filters, setFilters] = useState([])
 
-    const [newName, setNewName] = useState('');
 
-    const kodeInput = useRef();
-    const nameInput = useRef();
 
     useEffect(() => {
-        fetchData();
+        fetchDataCustomer();
     }, []);
 
-    const fetchData = async () => {
+    const fetchDataCustomer = async () => {
         try {
             const response = await axios.get('/api/customers');
-            setDataCustomers(response.data['data']);
+            setCustomer(response.data['data']);
             setFilters(response.data['data']);
         } catch (error) {
             showErrorToast("Gagal Fetch Data");
         }
     };
 
-    const submitData = async (e) => {
-        e.preventDefault();
+    const submitData = async (data) => {
         try {
-            await axios.post('/api/customers', {
-                kode: kodeInput.current.value,
-                name: nameInput.current.value,
-            }).then(r => {
+            await axios.post('/api/customers', data).then(r => {
                 showSuccessToast("Sukses Simpan Data");
-                fetchData();
+                fetchDataCustomer();
             });
         } catch (e) {
             showErrorToast("Gagal Simpan Data");
         } finally {
+            reset()
             setCloseAddModal(false);
         }
     };
@@ -63,34 +65,32 @@ export default function Customer() {
             showErrorToast("Gagal Hapus Data");
         } finally {
             setCloseModal(false);
-            fetchData();
+            fetchDataCustomer();
         }
     };
 
-    const editData = async (e) => {
-        e.preventDefault();
+    const editData = async (data) => {
         try {
-            await axios.put('/api/customers/' + selectedCell.kode, {
-                name: newName,
-            }).then(r => {
+            await axios.put('/api/customers/' + selectedCell.kode, data).then(r => {
                 showSuccessToast("Sukses Edit Data");
-                fetchData();
+                fetchDataCustomer();
             });
         } catch (e) {
             showErrorToast("Gagal Edit Data");
         } finally {
+            reset()
             setCloseEditModal(false);
         }
     };
 
     const searchValue = (value) => {
         if (value.trim() === '') {
-            return dataCustomers;
+            return listCustomer;
         }
 
         const searchValueLowerCase = value.toLowerCase();
 
-        return dataCustomers.filter((item) => {
+        return listCustomer.filter((item) => {
             for (let key in item) {
                 if (typeof item[key] === 'string' && item[key].toLowerCase().includes(searchValueLowerCase)) {
                     return true;
@@ -122,28 +122,32 @@ export default function Customer() {
                                 <ImCross size={10} />
                             </div>
                         </div>
-                        <div className="p-2 flex flex-col gap-5">
-                            <div className="border border-gray-300 w-full p-3 flex flex-col gap-3 text-sm">
-                                <div className="flex flex-row w-full justify-between items-center gap-2">
-                                    <label className="w-1/4">Kode : </label>
-                                    <input ref={kodeInput} className="border border-gray-300 p-1 flex-grow" />
+                        <form onSubmit={handleSubmit(submitData)}>
+                            <div className="p-2 flex flex-col gap-5">
+                                <div className="border border-gray-300 w-full p-3 flex flex-col gap-3 text-sm">
+                                    <div className="flex flex-row w-full justify-between items-center gap-2">
+                                        <label className="w-1/4">Kode : </label>
+                                        <input {...register("kode")} className="border border-gray-300 p-1 flex-grow" />
+                                    </div>
+                                    <div className="flex flex-row w-full justify-between items-center gap-2">
+                                        <label className="w-1/4">Nama Customer : </label>
+                                        <input {...register("name")} className="border border-gray-300 p-1 flex-grow" />
+                                    </div>
+                                    <div className="flex flex-row w-full justify-between items-center gap-2">
+                                        <label className="w-1/4">Keterangan : </label>
+                                        <input {...register("keterangan")} className="border border-gray-300 p-1 flex-grow" />
+                                    </div>
                                 </div>
-                                <div className="flex flex-row w-full justify-between items-center gap-2">
-                                    <label className="w-1/4">Nama Customer : </label>
-                                    <input ref={nameInput} className="border border-gray-300 p-1 flex-grow" />
+                                <div className="border border-gray-300 w-full p-3 flex flex-col gap-3 text-sm">
+                                    <div className="flex flex-row justify-center gap-2">
+                                        <input type={'submit'} className="bg-[#f17373] w-full text-white py-1 text-sm rounded"/>
+                                        <button onClick={() => setCloseAddModal(false)} className="border w-full border-gray-500 py-1 text-sm rounded">
+                                            Batal
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="border border-gray-300 w-full p-3 flex flex-col gap-3 text-sm">
-                                <div className="flex flex-row justify-center gap-2">
-                                    <button onClick={submitData} className="bg-[#f17373] w-full text-white py-1 text-sm rounded">
-                                        Simpan
-                                    </button>
-                                    <button onClick={() => setCloseAddModal(false)} className="border w-full border-gray-500 py-1 text-sm rounded">
-                                        Batal
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             ) : null}
@@ -161,43 +165,32 @@ export default function Customer() {
                             <ImCross size={10} />
                         </div>
                     </div>
-                    <div className="p-2 flex flex-col gap-5">
-                        <div className="border border-gray-300 w-full p-3 flex flex-col gap-3 text-sm">
-                            <div className="flex flex-row w-full justify-between items-center gap-2">
-                                <label className="w-1/4">Kode : </label>
-                                <input
-                                    value={selectedCell.kode}
-                                    disabled={true}
-                                    className="border border-gray-300 p-1 flex-grow"
-                                />
+                        <form onSubmit={handleSubmit(editData)}>
+                            <div className="p-2 flex flex-col gap-5">
+                                <div className="border border-gray-300 w-full p-3 flex flex-col gap-3 text-sm">
+                                    <div className="flex flex-row w-full justify-between items-center gap-2">
+                                        <label className="w-1/4">Kode : </label>
+                                        <input defaultValue={selectedCell.kode} className="border border-gray-300 p-1 flex-grow" />
+                                    </div>
+                                    <div className="flex flex-row w-full justify-between items-center gap-2">
+                                        <label className="w-1/4">Nama Customer : </label>
+                                        <input {...register("name")} className="border border-gray-300 p-1 flex-grow" />
+                                    </div>
+                                    <div className="flex flex-row w-full justify-between items-center gap-2">
+                                        <label className="w-1/4">Keterangan : </label>
+                                        <input {...register("keterangan")} className="border border-gray-300 p-1 flex-grow" />
+                                    </div>
+                                </div>
+                                <div className="border border-gray-300 w-full p-3 flex flex-col gap-3 text-sm">
+                                    <div className="flex flex-row justify-center gap-2">
+                                        <input type={'submit'} className="bg-[#f17373] w-full text-white py-1 text-sm rounded"/>
+                                        <button onClick={() => setCloseAddModal(false)} className="border w-full border-gray-500 py-1 text-sm rounded">
+                                            Batal
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="flex flex-row w-full justify-between items-center gap-2">
-                                <label className="w-1/4">Name : </label>
-                                <input
-                                    type="text"
-                                    defaultValue={selectedCell.name}
-                                    onChange={(event) => setNewName(event.target.value)}
-                                    className="border border-gray-300 p-1 flex-grow"
-                                />
-                            </div>
-                        </div>
-                        <div className="border border-gray-300 w-full p-3 flex flex-col gap-3 text-sm">
-                            <div className="flex flex-row justify-center gap-2">
-                                <button
-                                    onClick={editData}
-                                    className="bg-[#f17373] w-full text-white py-1 text-sm rounded"
-                                >
-                                    Simpan
-                                </button>
-                                <button
-                                    onClick={() => setCloseEditModal(false)}
-                                    className="border w-full border-gray-500 py-1 text-sm rounded"
-                                >
-                                    Batal
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                        </form>
                 </div>
                 </div>
                 ) : null}
@@ -259,7 +252,7 @@ export default function Customer() {
                 <p className="text-white font-bold text-sm">Excel</p>
             </div>
             <div
-                onClick={fetchData}
+                onClick={fetchDataCustomer}
                 className="flex-row flex items-center gap-1 px-3 py-1 hover:bg-[#2589ce] hover:cursor-pointer"
             >
                 <BiRefresh size={12} />
@@ -271,8 +264,9 @@ export default function Customer() {
                 <thead>
                 <tr>
                     <th className="py-2 bg-gray-100 text-center w-20">#</th>
-                    <th className="py-2 bg-gray-100 text-left">Kode Customer (A~Z)</th>
+                    <th className="py-2 bg-gray-100 text-left">Kode (A~Z)</th>
                     <th className="py-2 bg-gray-100 text-left">Nama Customer</th>
+                    <th className="py-2 bg-gray-100 text-left">Keterangan</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -282,9 +276,10 @@ export default function Customer() {
                         key={e['kode']}
                         onClick={() => setSelectedCell(e)}
                     >
-                        <td className="text-center p-1.5">{index + 1}</td>
+                        <td className="text-center p-1">{index + 1}</td>
                         <td>{e['kode']}</td>
                         <td>{e['name']}</td>
+                        <td>{e['keterangan']}</td>
                     </tr>
                 ))}
                 </tbody>

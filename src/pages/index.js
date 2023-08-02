@@ -90,7 +90,7 @@ export default function Index() {
 }
 
 export const getServerSideProps = ({ req, res }) => {
-    const cookie = getCookie('@vuteq-token', { req, res });
+    const cookie = getCookie('@vuteq-token-exedy', { req, res });
 
     if (cookie) {
         res.writeHead(302, { Location: '/vuteq/home' });

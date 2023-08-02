@@ -1,0 +1,38 @@
+import {create} from "zustand";
+
+const customerState = create((set) => ({
+    listCustomer:[],
+    listSubCustomer:[],
+    listBarangType: [],
+    listBarangJenis:[],
+    listBarangGroup: [],
+    listBarangSegment: [],
+    listBarangSatuan: [],
+    listBarangMaster: [],
+    listBarangMasterAll: [],
+    listTarifPacking: [],
+    listGudang: [],
+    listOperator: [],
+    listBom: [],
+    listIncoming: [],
+    listPackingList: [],
+    listHasilPacking: [],
+    setCustomer: (data) => set ({listCustomer: data}),
+    setListSubCustomer: (data) => set ({listSubCustomer: data}),
+    setBarangType: (data) => set ({listBarangType: data}),
+    setBarangJenis: (data) => set ({listBarangJenis: data}),
+    setBarangGroup: (data) => set ({listBarangGroup:data}),
+    setBarangSegment: (data) => set ({listBarangSegment: data}),
+    setBarangSatuan: (data) => set ({listBarangSatuan: data}),
+    setBarangMaster: (data) => set ({listBarangMaster: data}),
+    setBarangMasterAll: (data) => set ({listBarangMasterAll: data}),
+    setTarifPacking: (data) => set ({listTarifPacking: data}),
+    setGudang: (data) => set ({listGudang: data}),
+    setOperator: (data) => set ({listOperator: data}),
+    setBom: (data) => set ({listBom: data}),
+    setIncoming: (data) => set ({listIncoming:data}),
+    setPackingList: (data) => set ({listPackingList: data}),
+    setHasilPacking: (data) => set ({listHasilPacking: data}),
+}));
+
+export {customerState}

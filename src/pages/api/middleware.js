@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "@/models/User";
 
 const checkCookieMiddleware = (handler) => async (req, res) => {
-    const cookies = getCookie('@vuteq-token', { req, res });
+    const cookies = getCookie('@vuteq-token-exedy', { req, res });
     const decoded = jwt.verify(cookies, 'vuteqcorp');
 
     const user = await User.findOne({
@@ -32,5 +32,13 @@ const checkCookieMiddleware = (handler) => async (req, res) => {
     // Jika cookie valid, lanjutkan ke handler API
     return handler(req, res);
 };
+
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: '8mb',
+        },
+    },
+}
 
 export default checkCookieMiddleware

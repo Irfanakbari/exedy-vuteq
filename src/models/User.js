@@ -11,7 +11,12 @@ const User = connection.define('User', {
         primaryKey: true,
     },
     username: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
     },
     role: {
         type: DataTypes.STRING,
@@ -22,7 +27,8 @@ const User = connection.define('User', {
     }
 }, {
     tableName: 'users',
-    timestamps: false
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
 });
 
 

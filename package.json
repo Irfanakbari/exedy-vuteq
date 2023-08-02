@@ -1,9 +1,9 @@
 {
-  "name": "valet-management",
+  "name": "exedy",
   "version": "1.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 8080",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -20,14 +20,18 @@
     "eslint": "8.44.0",
     "eslint-config-next": "^13.4.7",
     "file-saver": "^2.0.5",
+    "formidable": "^3.5.0",
     "fs": "^0.0.1-security",
     "html2canvas": "^1.4.1",
     "jsonwebtoken": "^9.0.1",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.5.1",
     "next": "13.4.7",
     "next-qrcode": "^2.4.1",
+    "prettyjson": "^1.2.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.45.1",
     "react-icons": "^4.10.1",
     "react-loader-spinner": "^5.3.4",
     "react-qrcode-logo": "^2.9.0",
@@ -38,6 +42,7 @@
     "sequelize": "^6.32.1",
     "usehooks-ts": "^2.9.1",
     "uuid": "^9.0.0",
+    "xlsx": "^0.18.5",
     "zustand": "^4.3.9"
   },
   "devDependencies": {
